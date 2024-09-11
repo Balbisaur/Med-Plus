@@ -12,7 +12,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app) # allows frontend to communicate with backend.
+CORS(app) # allows frontend to make requests to the flask backend
 
 # Swagger setup
 SWAGGER_URL = '/api/docs'
