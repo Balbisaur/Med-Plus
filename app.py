@@ -8,8 +8,11 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from models.user_model import User
 from models.medication_model import Medication
 from models.reminder_model import Reminder
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Swagger setup
 SWAGGER_URL = '/api/docs'
