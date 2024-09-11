@@ -1,4 +1,4 @@
-# Medication Reminder Application
+# Med Plus
 
 A medication reminder application that helps users manage their medications and reminders. The app includes features for user authentication, medication management, and setting up reminders. 
 
