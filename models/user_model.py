@@ -7,7 +7,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # 'child', 'user', or 'caregiver'
+    role = db.Column(db.String(20), nullable=False) # 'child', 'user', or 'caregiver'
+    email = db.Column(db.String(50), nullable=False)
 
     medications = db.relationship('Medication', backref='owner', lazy=True)
 
