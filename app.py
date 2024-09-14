@@ -8,6 +8,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from models.user_model import User
 from models.medication_model import Medication
 from models.reminder_model import Reminder
+from models.prescription_model import Prescription
 from flask_cors import CORS
 
 app = Flask(__name__)
