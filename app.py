@@ -35,7 +35,6 @@ init_db()
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    # If the exception is an HTTPException, use its status code, otherwise use 500
     if isinstance(e, HTTPException):
         return jsonify({"error": e.description}), e.code
     else:
