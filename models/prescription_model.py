@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from database import db  
+from database import db
+ 
 
 class Prescription(db.Model):
     __tablename__ = 'prescriptions'
@@ -15,6 +16,11 @@ class Prescription(db.Model):
     user = relationship("User", back_populates="prescriptions")
     medication = relationship("Medication", back_populates="prescriptions")
     doctor = relationship("Doctor", back_populates="prescriptions")
+    reminder = relationship("Reminder", back_populates="prescription", uselist=False)
+    # reminder = relationship("Reminder", back_populates="prescription")
+    def get_user(self):
+        from models.user_model import User
+        return User.query.get(self.user_id)
 
     def __repr__(self):
         return f"<Prescription(user_id={self.user_id}, medication_id={self.medication_id}, prescribed_by={self.prescribed_by})>"
