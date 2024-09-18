@@ -382,3 +382,10 @@ components:
 security:
   - BearerAuth: []
 
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
