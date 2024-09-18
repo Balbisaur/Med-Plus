@@ -1,276 +1,328 @@
 openapi: 3.0.0
 info:
   title: Medication Reminder API
-  description: API for managing medications and reminders for users, caregivers, and children.
-  version: "1.0.0"
+  description: API documentation for the Medication Reminder application.
+  version: 1.0.0
 servers:
   - url: http://localhost:5000
     description: Local server
-
-tags:
-  - name: Authentication
-    description: Endpoints related to user authentication
-  - name: Medications
-    description: Endpoints related to managing medications
-  - name: Reminders
-    description: Endpoints related to managing reminders
-
 paths:
-
-  /login:
+  /users/register:
     post:
-      tags:
-        - Authentication
-      summary: User login
+      summary: Register a new user
       requestBody:
-        description: Login with username and password
+        description: User registration details
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Invalid input
+
+  /users/login:
+    post:
+      summary: User login
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
       responses:
         '200':
           description: Successful login
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: JWT token for authentication
+                $ref: '#/components/schemas/Token'
         '401':
           description: Invalid credentials
 
-  /register:
-    post:
-      tags:
-        - Authentication
-      summary: User registration
-      requestBody:
-        description: Register a new user
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                role:
-                  type: string
-                  enum: [child, user, caregiver]
-      responses:
-        '201':
-          description: User registered successfully
-        '409':
-          description: User already exists
-
-  /medication/add:
-    post:
-      tags:
-        - Medications
-      summary: Add a medication
-      requestBody:
-        description: Add a new medication for a user
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: Name of the medication
-                dosage:
-                  type: string
-                  description: Dosage of the medication
-                purpose:
-                  type: string
-                  description: Purpose of the medication
-                side_effects:
-                  type: string
-                  description: Side effects of the medication
-                precautions:
-                  type: string
-                  description: Precautions for the medication
-                warnings:
-                  type: string
-                  description: Warnings for the medication
-                user_id:
-                  type: integer
-                  description: ID of the user to whom the medication belongs
-      responses:
-        '201':
-          description: Medication added successfully
-        '400':
-          description: Failed to add medication
-
-  /medication/{med_id}:
+  /users/{user_id}:
     get:
-      tags:
-        - Medications
-      summary: Get medication details
+      summary: Get user information
       parameters:
-        - name: med_id
+        - name: user_id
           in: path
           required: true
-          description: ID of the medication
           schema:
             type: integer
       responses:
         '200':
-          description: Medication details retrieved successfully
+          description: User information
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  dosage:
-                    type: string
-                  purpose:
-                    type: string
-                  side_effects:
-                    type: string
-                  precautions:
-                    type: string
-                  warnings:
-                    type: string
+                $ref: '#/components/schemas/User'
         '404':
-          description: Medication not found
+          description: User not found
 
-  /reminder/add:
-    post:
-      tags:
-        - Reminders
-      summary: Add a reminder
+    put:
+      summary: Update user information
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
-        description: Add a reminder for a medication
+        description: Updated user details
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                medication_id:
-                  type: integer
-                  description: ID of the medication
-                time_to_take:
-                  type: string
-                  format: date-time
-                  description: Time to take the medication (format: YYYY-MM-DD HH:MM:SS)
-      responses:
-        '201':
-          description: Reminder added successfully
-        '400':
-          description: Invalid input or failed to add reminder
-
-  /reminders/upcoming:
-    get:
-      tags:
-        - Reminders
-      summary: Get upcoming reminders
-      security:
-        - BearerAuth: []
+              $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: List of upcoming reminders for the user
+          description: User information updated
+        '404':
+          description: User not found
+
+    delete:
+      summary: Delete user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+
+  /users/{user_id}/medications:
+    get:
+      summary: Get medications for a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of medications
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    medication_name:
-                      type: string
-                    dosage:
-                      type: string
-                    time_to_take:
-                      type: string
-                      format: date-time
-                    taken:
-                      type: boolean
+                  $ref: '#/components/schemas/Medication'
+
+    post:
+      summary: Add a new medication
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Medication details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Medication'
+      responses:
+        '201':
+          description: Medication added
+        '400':
+          description: Invalid input
+
+  /users/{user_id}/medications/{medication_id}:
+    delete:
+      summary: Delete a medication
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: medication_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Medication deleted
         '404':
-          description: No upcoming reminders found
-        '401':
-          description: Unauthorized (Invalid or missing token)
+          description: Medication not found
+
+  /users/{user_id}/reminders:
+    get:
+      summary: Get reminders for a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+
+    post:
+      summary: Add a new reminder
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Reminder details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reminder'
+      responses:
+        '201':
+          description: Reminder added
+        '400':
+          description: Invalid input
+
+  /users/{user_id}/reminders/{reminder_id}:
+    delete:
+      summary: Delete a reminder
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: reminder_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Reminder deleted
+        '404':
+          description: Reminder not found
+
+  /qr-code:
+    post:
+      summary: Generate QR code for medication
+      requestBody:
+        description: Medication information to encode
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Medication'
+      responses:
+        '200':
+          description: QR code generated
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
 
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
   schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "securepassword"
+        role:
+          type: string
+          enum:
+            - child
+            - user
+            - caregiver
+          example: "user"
+      
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "securepassword"
+      
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
     Medication:
       type: object
       properties:
         id:
           type: integer
-          description: Unique ID of the medication
+          example: 1
         name:
           type: string
-          description: Name of the medication
+          example: "Aspirin"
         dosage:
           type: string
-          description: Dosage of the medication
+          example: "500mg"
         purpose:
           type: string
-          description: Purpose of the medication
+          example: "Pain relief"
         side_effects:
           type: string
-          description: Side effects of the medication
+          example: "Nausea"
         precautions:
           type: string
-          description: Precautions for using the medication
+          example: "Avoid alcohol"
         warnings:
           type: string
-          description: Warnings associated with the medication
-        user_id:
-          type: integer
-          description: ID of the user to whom the medication belongs
+          example: "Do not exceed recommended dose"
 
     Reminder:
       type: object
       properties:
         id:
           type: integer
-          description: Unique ID of the reminder
+          example: 1
         medication_id:
           type: integer
-          description: ID of the associated medication
-        time_to_take:
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        time:
           type: string
           format: date-time
-          description: Time when the reminder is scheduled
-        taken:
-          type: boolean
-          description: Whether the medication was taken or not
+          example: "2024-09-18T08:00:00Z"
+        dosage:
+          type: string
+          example: "500mg"
 
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the user
-        username:
-          type: string
-          description: Username of the user
-        role:
-          type: string
-          description: Role of the user (child, user, caregiver)
 
 security:
   - BearerAuth: []
