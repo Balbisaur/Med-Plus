@@ -2,13 +2,13 @@ from flask import Blueprint, request, jsonify
 from services.user_service import UserService
 from utils.jwt_utils import decode_token
 
-# Define the blueprint for user-related routes
+# Defines the blueprint for user-related routes
 user_bp = Blueprint('user_bp', __name__)
 
-# Initialize the user service
+# Initializes the user service
 user_service = UserService()
 
-# Define the login route
+# Defines the login route
 @user_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -22,7 +22,7 @@ def login():
         return jsonify(result), 200
     return jsonify({'error': 'Invalid credentials'}), 401
 
-# Define the user registration route
+# Defines the user registration route
 @user_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -51,7 +51,7 @@ def get_user(user_id):
         }), 200
     return jsonify({'error': 'User not found'}), 404
 
-# Define the route to update user information
+# Defines the route to update user information
 @user_bp.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.get_json()
@@ -66,7 +66,7 @@ def update_user(user_id):
         }), 200
     return jsonify({'error': 'User not found or update failed'}), 404
 
-# Define the route to delete a user
+# Defines the route to delete a user
 @user_bp.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     success = user_service.delete_user(user_id)
@@ -75,7 +75,7 @@ def delete_user(user_id):
         return jsonify({'message': 'User deleted successfully'}), 200
     return jsonify({'error': 'User not found or deletion failed'}), 404
 
-# Define the route to get all medications for a user
+# Defines the route to get all medications for a user
 @user_bp.route('/users/<int:user_id>/medications', methods=['GET'])
 def get_medications(user_id):
     medications = user_service.get_all_medications(user_id)
@@ -89,7 +89,7 @@ def get_medications(user_id):
         } for med in medications]), 200
     return jsonify({'error': 'No medications found'}), 404
 
-# Define the route to add a medication to a user's profile
+# Defines the route to add a medication to a user's profile
 @user_bp.route('/users/<int:user_id>/medications', methods=['POST'])
 def add_medication(user_id):
     data = request.get_json()
@@ -115,7 +115,7 @@ def add_medication(user_id):
         }), 201
     return jsonify({'error': 'Failed to add medication'}), 400
 
-# Define the route to delete a medication from a user's profile
+# Defines the route to delete a medication from a user's profile
 @user_bp.route('/users/<int:user_id>/medications/<int:medication_id>', methods=['DELETE'])
 def delete_medication(user_id, medication_id):
     success = user_service.delete_medication(user_id, medication_id)
