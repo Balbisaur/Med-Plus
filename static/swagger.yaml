@@ -9,6 +9,8 @@ servers:
 paths:
   /users/register:
     post:
+      tags:
+        - User
       summary: Register a new user
       requestBody:
         description: User registration details
@@ -25,6 +27,8 @@ paths:
 
   /users/login:
     post:
+      tags:
+        - User
       summary: User login
       requestBody:
         description: User login credentials
@@ -45,6 +49,8 @@ paths:
 
   /users/{user_id}:
     get:
+      tags:
+        - User
       summary: Get user information
       parameters:
         - name: user_id
@@ -63,6 +69,8 @@ paths:
           description: User not found
 
     put:
+      tags:
+        - User
       summary: Update user information
       parameters:
         - name: user_id
@@ -84,6 +92,8 @@ paths:
           description: User not found
 
     delete:
+      tags:
+        - User
       summary: Delete user
       parameters:
         - name: user_id
@@ -99,6 +109,8 @@ paths:
 
   /users/{user_id}/medications:
     get:
+      tags:
+        - Medication
       summary: Get medications for a user
       parameters:
         - name: user_id
@@ -117,6 +129,8 @@ paths:
                   $ref: '#/components/schemas/Medication'
 
     post:
+      tags:
+        - Medication
       summary: Add a new medication
       parameters:
         - name: user_id
@@ -139,6 +153,8 @@ paths:
 
   /users/{user_id}/medications/{medication_id}:
     delete:
+      tags:
+        - Medication
       summary: Delete a medication
       parameters:
         - name: user_id
@@ -159,6 +175,8 @@ paths:
 
   /users/{user_id}/reminders:
     get:
+      tags:
+        - Reminder
       summary: Get reminders for a user
       parameters:
         - name: user_id
@@ -177,6 +195,8 @@ paths:
                   $ref: '#/components/schemas/Reminder'
 
     post:
+      tags:
+        - Reminder
       summary: Add a new reminder
       parameters:
         - name: user_id
@@ -199,6 +219,8 @@ paths:
 
   /users/{user_id}/reminders/{reminder_id}:
     delete:
+      tags:
+        - Reminder
       summary: Delete a reminder
       parameters:
         - name: user_id
@@ -219,6 +241,8 @@ paths:
 
   /qr-code:
     post:
+      tags:
+        - QR Code
       summary: Generate QR code for medication
       requestBody:
         description: Medication information to encode
@@ -235,6 +259,36 @@ paths:
               schema:
                 type: string
                 format: binary
+
+  /users/{user_id}/qr-code:
+    post:
+      tags:
+        - QR Code
+      summary: Implement medication from QR code into user's profile
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: QR code data to be implemented
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qr_code_data:
+                  type: string
+                  example: '{"medication": {"name": "Aspirin", "dosage": "500mg", "purpose": "Pain relief"}}'
+      responses:
+        '200':
+          description: Medication information successfully implemented into user profile and medications list
+        '400':
+          description: Invalid QR code data
+        '404':
+          description: User not found
 
 components:
   schemas:
@@ -322,6 +376,7 @@ components:
         dosage:
           type: string
           example: "500mg"
+
 
 
 security:
