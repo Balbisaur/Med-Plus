@@ -17,7 +17,7 @@ class Prescription(db.Model):
     medication = relationship("Medication", back_populates="prescriptions")
     doctor = relationship("Doctor", back_populates="prescriptions")
     reminder = relationship("Reminder", back_populates="prescription", uselist=False)
-    # reminder = relationship("Reminder", back_populates="prescription")
+   
     def get_user(self):
         from models.user_model import User
         return User.query.get(self.user_id)
