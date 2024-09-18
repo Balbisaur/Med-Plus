@@ -10,10 +10,13 @@ from models.medication_model import Medication
 from models.reminder_model import Reminder
 from models.prescription_model import Prescription
 from flask_cors import CORS
+from flask import jsonify
+from werkzeug.exceptions import HTTPException
+
 
 app = Flask(__name__)
 
-CORS(app) # allows frontend to make requests to the flask backend
+CORS(app)
 
 # Swagger setup
 SWAGGER_URL = '/api/docs'
@@ -26,8 +29,17 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(medication_bp)
 app.register_blueprint(reminder_bp)
 
+
 # Initialize DB
 init_db()
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # If the exception is an HTTPException, use its status code, otherwise use 500
+    if isinstance(e, HTTPException):
+        return jsonify({"error": e.description}), e.code
+    else:
+        return jsonify({"error": "Internal Server Error"}), 500
 
 
 
