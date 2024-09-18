@@ -59,6 +59,13 @@ The Medication Reminder Application is designed to help users, caregivers, and c
 | `PUT /users/{id}`               | Update user information.                                 |
 | `DELETE /users/{id}`            | Delete a user.                                           |
 
+## **Tech Stack**
+- Backend: Flask, SQLAlchemy
+- Database: MySQL
+- Authentication: JWT (JSON Web Tokens)
+- Frontend: Integrated with React.js (handled by frontend developer)
+- Swagger: API documentation with Swagger UI
+
 
 
 
