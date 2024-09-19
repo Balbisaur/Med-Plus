@@ -8,6 +8,31 @@ class UserService:
     def __init__(self):
         pass
 
+    def register(self, user_data):
+        # Validate user data
+        if not all(key in user_data for key in ("username", "password", "email")):
+            raise ValueError("Missing required fields")
+
+        # Example: Check for existing user (pseudo-code)
+        existing_user = User.query.filter_by(email=user_data['email']).first()
+        if existing_user:
+            raise ValueError("User with this email already exists")
+
+        # Create and save new user
+        new_user = User(
+            username=user_data['username'],
+            password=user_data['password'],  # Hash password in a real app
+            email=user_data['email']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        return {
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email
+        }
+
     def create_user(self, username, password, email, role):
         # Creating a new user
         hashed_password = generate_password_hash(password)
