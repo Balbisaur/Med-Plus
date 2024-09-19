@@ -22,7 +22,7 @@ def generate_qr_code(medication_info):
     
     img = qr.make_image(fill='black', back_color='white')
     
-    # Convert the QR code image to base64 format to send it as JSON response
+    # Converts the QR code image to base64 format to send it as JSON response
     buffered = BytesIO()
     img.save(buffered, format="PNG")
     img_str = b64encode(buffered.getvalue()).decode('utf-8')
