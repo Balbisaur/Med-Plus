@@ -1,50 +1,55 @@
 openapi: 3.0.0
 info:
   title: Medication Reminder API
-  description: API documentation for the Medication Reminder application.
   version: 1.0.0
+  description: API documentation for the Medication Reminder system
 servers:
   - url: http://localhost:5000
-    description: Local server
 
 paths:
   /users/register:
     post:
       tags:
-        - User
-      summary: Register a new user
+        - Users
+      summary: Registers a new user
       requestBody:
-        description: User registration details
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
       responses:
         '201':
-          description: User registered successfully
+          description: User created successfully
         '400':
-          description: Invalid input
+          description: Bad request
 
   /users/login:
     post:
       tags:
-        - User
-      summary: User login
+        - Users
+      summary: Logs in a user
       requestBody:
-        description: User login credentials
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Login'
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
       responses:
         '200':
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
+          description: Login successful
         '401':
           description: Invalid credentials
 
