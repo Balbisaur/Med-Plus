@@ -4,30 +4,20 @@ from database import db
 from datetime import datetime
 
 # Adds a new reminder for a specific medication
-def add_reminder(user_id, medication_id, time_to_take):
-    try:
-        # Convert the time to take to a datetime object
-        time_to_take_dt = datetime.strptime(time_to_take, '%Y-%m-%d %H:%M:%S')
-
-        # Check if the medication exists and belongs to the user
-        medication = Medication.query.filter_by(id=medication_id, user_id=user_id).first()
-        if not medication:
-            return False
-
-        # Create the reminder entry
-        new_reminder = Reminder(
-            medication_id=medication_id,
-            time_to_take=time_to_take_dt,
-            taken=False
+class ReminderService:
+    def add_reminder(self, user_id, data):
+        reminder = Reminder(
+            user_id=user_id,
+            medication_id=data.get('medication_id'),
+            time=data.get('time'),
+            dosage=data.get('dosage')
         )
-
-        # Add the new reminder to the database
-        db.session.add(new_reminder)
+        db.session.add(reminder)
         db.session.commit()
-        return True
-    except Exception as e:
-        print(f"Error adding reminder: {str(e)}")
-        return False
+        return {"id": reminder.id, "time": reminder.time, "dosage": reminder.dosage}
+
+    def get_reminders(self, user_id):
+        return Reminder.query.filter_by(user_id=user_id).all()
 
 # Gets upcoming reminders for a specific user
 def get_upcoming_reminders(user_id):
@@ -53,3 +43,4 @@ def get_upcoming_reminders(user_id):
     except Exception as e:
         print(f"Error fetching reminders: {str(e)}")
         return []
+
