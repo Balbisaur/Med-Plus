@@ -1,14 +1,18 @@
-from flask import Blueprint
-from controllers.medication_controller import add_medication_route, get_medication_route
+from flask import Blueprint, request, jsonify
+from services.medication_service import MedicationService
 
-medication_bp = Blueprint('medication', __name__)
+medication_bp = Blueprint('medication_bp', __name__)
+medication_service = MedicationService()
 
-# Route to add medication
-@medication_bp.route('/medication/add', methods=['POST'])
+@medication_bp.route('/medications', methods=['POST'])
 def add_medication():
-    return add_medication_route()
+    data = request.json
+    user_id = request.args.get('user_id')
+    result = medication_service.add_medication(user_id, data)
+    return jsonify(result), 201
 
-# Route to get medication details by ID
-@medication_bp.route('/medication/<int:med_id>', methods=['GET'])
-def get_medication(med_id):
-    return get_medication_route(med_id)
+@medication_bp.route('/medications', methods=['GET'])
+def get_medications():
+    user_id = request.args.get('user_id')
+    result = medication_service.get_medications(user_id)
+    return jsonify(result), 200
