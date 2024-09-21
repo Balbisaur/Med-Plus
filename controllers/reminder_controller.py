@@ -1,29 +1,23 @@
-from flask import request, jsonify
-from services.reminder_service import add_reminder, get_upcoming_reminders
+from flask import request, jsonify, Blueprint
+from services.reminder_service import ReminderService, get_upcoming_reminders
 from utils.jwt_utils import decode_token
 
 # Adds a reminder for a specific medication
-def add_reminder_route():
-    try:
-        data = request.get_json()
-        # Extract token from headers to identify user
-        token = request.headers.get('Authorization').split(" ")[1]
-        user_id = decode_token(token)['user_id']
+reminder_bp = Blueprint('reminder_bp', __name__)
+reminder_service = ReminderService()
 
-        medication_id = data.get('medication_id')
-        time_to_take = data.get('time_to_take')
+@reminder_bp.route('/reminders', methods=['POST'])
+def add_reminder():
+    data = request.json
+    user_id = request.args.get('user_id')
+    result = reminder_service.add_reminder(user_id, data)
+    return jsonify(result), 201
 
-        # Validate request
-        if not medication_id or not time_to_take:
-            return jsonify({"message": "Missing medication_id or time_to_take"}), 400
-
-        # Add the reminder using service
-        if add_reminder(user_id, medication_id, time_to_take):
-            return jsonify({"message": "Reminder added successfully!"}), 201
-        else:
-            return jsonify({"message": "Failed to add reminder"}), 400
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
+@reminder_bp.route('/reminders', methods=['GET'])
+def get_reminders():
+    user_id = request.args.get('user_id')
+    reminders = reminder_service.get_reminders(user_id)
+    return jsonify([rem.to_dict() for rem in reminders]), 200
 
 # Gets the upcoming reminders for the logged-in user
 def get_upcoming_reminders_route():
