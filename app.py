@@ -16,7 +16,7 @@ from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Swagger setup
 SWAGGER_URL = '/api/docs'
